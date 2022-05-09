@@ -1,10 +1,13 @@
 package com.example.spriteinvadersclientserver;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientHandler
 {
@@ -27,8 +30,33 @@ public class ClientHandler
         try {
             while ((userInput = in.readLine()) != null) {
                 System.out.println("Client: " + (userInput));
-                //out.println(process(userInput));
                 out.println(userInput);
+            }
+        } catch (IOException e) {
+            System.out.println("Client disconnected");
+        }
+    }
+
+    public void sendJSON() {
+        String jsonStr = "[ {\"name\": \"Giove\",\n" +
+                " \"description\": \"desc1\"\n" +
+                " },\n" +
+                " {\"name\": \"Odino\",\n" +
+                " \"description\": \"desc2\"\n" +
+                " }\n"+
+                "]\n";
+
+        out.println(jsonStr);
+    }
+
+    private static void readJSON(String jsonStr) {
+
+        String userInput;
+        try {
+            while ((userInput = in.readLine()) != null) {
+                Gson gson = new Gson();
+                God[] gods = gson.fromJson(jsonStr, God[].class);
+                System.out.println(Arrays.toString(gods));
             }
         } catch (IOException e) {
             System.out.println("Client disconnected");

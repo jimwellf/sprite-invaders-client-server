@@ -1,8 +1,6 @@
 package com.example.spriteinvadersclientserver;
 
 import javafx.application.Platform;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,14 +9,15 @@ import java.util.TimerTask;
 
 public class ServerMain {
 
-    static int portNumber = 1234;
-    static ServerSocket serverSocket = null;
+    private static int portNumber = 1234;
+    private static ServerSocket serverSocket = null;
     private static Socket clientSocket = null;
+
+    private static Timer timer;
 
     public static void main(String[] args)
     {
-        String hostName = "127.0.0.1";
-        int portNumber = 1234;
+        timer = startTimer();
 
         serverSocket = openServer();
         if (serverSocket == null) {
@@ -33,6 +32,7 @@ public class ServerMain {
             Thread th = new Thread(() ->
             {
                 clientHandler.handleReaderPrinter();
+                clientHandler.sendJSON();
                 closeClientSocket();
             });
 
@@ -40,8 +40,9 @@ public class ServerMain {
         }
     }
 
-    private void startTimer(Stage primaryStage) {
+    private static Timer startTimer() {
         Timer timer = new Timer("Timer");
+
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(() -> {
@@ -49,6 +50,8 @@ public class ServerMain {
                 });
             }
         };
+
+        return timer;
     }
 
     private static ServerSocket openServer() {
